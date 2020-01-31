@@ -8,6 +8,11 @@ var UserSchema = new Schema({
         unique: true,
         required: true
     },
+    email: {
+        type: String,
+        unique: true,
+        required: true
+    },
     password: {
         type: String,
         required: true
@@ -16,6 +21,26 @@ var UserSchema = new Schema({
         type: String,
         required: false
     },
+    age: {
+        type: String,
+        required: false,
+        default:0
+    },
+    mobileNo: {
+        type: String,
+        required: false,
+        default:0,
+    },
+    firstName: {
+        type: String,
+        required: false,
+        default:""
+    },
+    lastName: {
+        type: String,
+        required: false,
+        default:""
+    },
     address: {
         type: Object,
         required: false
@@ -23,6 +48,10 @@ var UserSchema = new Schema({
     terms: {
         type: Boolean,
         required: false
+    },
+    role: {
+        type: String,
+        default: "user"
     }
 });
 

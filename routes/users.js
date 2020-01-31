@@ -10,5 +10,6 @@ router.post('/signin',   userController.signin);
 router.post('/createEvent',   userController.createEvent);
 
 // router.post('/', passport.authenticate('jwt', { session: false}),  userController.addOrUpdateAction);
+router.post('/updateProfile', passport.authenticate('jwt', { session: false}),  userController.updateProfile);
 
 module.exports = router;
