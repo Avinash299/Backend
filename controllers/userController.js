@@ -82,3 +82,23 @@ function signin(req, res) {
       }); 
     }
   };
+  function getA(req, res) {
+    if (!req.body.username || !req.body.email) {
+      res.json({success: false, msg: 'Please pass username and email.'});
+    } else {
+      // update the user
+      let updateInfo={
+        firstName:req.body.firstName,
+        lastName:req.body.lastName,
+        address:req.body.address,
+        aboutMe:req.body.aboutMe
+      }
+      User.update({username:req.body.username,email:req.body.email},{"$set":updateInfo},function(err) {
+        if (err) {
+          return res.json({success: false, msg: 'Profile updation failed.'});
+        }else{
+          res.json({success: true,data:updateInfo,  msg: 'Successful updated profile.'});
+        }
+      }); 
+    }
+  };
