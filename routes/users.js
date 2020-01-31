@@ -7,6 +7,6 @@ var userController = require('../controllers/userController');
 
 router.post('/signup',   userController.signup);
 router.post('/signin',   userController.signin);
-// router.post('/', passport.authenticate('jwt', { session: false}),  userController.addOrUpdateAction);
+router.post('/updateProfile', passport.authenticate('jwt', { session: false}),  userController.updateProfile);
 
 module.exports = router;
