@@ -84,7 +84,7 @@ function signin(req, res) {
           res.json({success: true, msg: 'Successful created new event.'});
         }
       }); 
-  //  }
+   }
   function updateProfile(req, res) {
     if (!req.body.username || !req.body.email) {
       res.json({success: false, msg: 'Please pass username and email.'});
