@@ -2,26 +2,23 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var EventSchema = new Schema({
-    eventName: {
+    name: {
         type: String,
     },
-    eventCountry: {
+    description: {
         type: String,
     },
-    eventCity: {
+    status: {
         type: String,
     },
-    startModel: {
+    startDate: {
         type: Object,
     },
-    endModel: {
+    endDate: {
         type: Object,
     },
-    eventDescription: {
+    rules: {
         type: String,
-    },
-    eventProblemStatement: {
-        type: String,
-    },
+    }
 });
 module.exports = mongoose.model('Event', EventSchema);

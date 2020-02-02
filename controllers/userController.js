@@ -7,6 +7,7 @@ module.exports = {
     signin: signin,
     updateProfile: updateProfile,
     createEvent: createEvent,
+    getEvents: getEvents,
 }
 
 
@@ -64,17 +65,6 @@ function signin(req, res) {
     });
   };
  async function createEvent(req, res) {
-    // if (!req.body.username || !req.body.password) {
-    //   res.json({success: false, msg: 'Please pass username and password.'});
-    // } else {
-      let sday= req.body.startModel["day"];
-      let smonth =   req.body.startModel["month"];
-       let syear = req.body.startModel['year'];
-
-       let eday= req.body.endModel["day"];
-       let emonth =   req.body.endModel["month"];
-        let eyear = req.body.endModel['year'];
-
       var newEvent = new Event(req.body);
       // save the event
       await newEvent.save(function(err) {
@@ -84,7 +74,8 @@ function signin(req, res) {
           res.json({success: true, msg: 'Successful created new event.'});
         }
       }); 
-   }
+   
+  }
   function updateProfile(req, res) {
     if (!req.body.username || !req.body.email) {
       res.json({success: false, msg: 'Please pass username and email.'});
@@ -105,23 +96,14 @@ function signin(req, res) {
       }); 
     }
   };
-  function getA(req, res) {
-    if (!req.body.username || !req.body.email) {
-      res.json({success: false, msg: 'Please pass username and email.'});
-    } else {
-      // update the user
-      let updateInfo={
-        firstName:req.body.firstName,
-        lastName:req.body.lastName,
-        address:req.body.address,
-        aboutMe:req.body.aboutMe
+  
+ function getEvents(req, res) {
+   Event.find({},function(err,result) {
+      if (err) {
+        return res.json({success: false, msg: 'Problem in fetching events.'});
+      }else{
+        res.json({success: true, data:result ,msg: 'Successful event fetched.'});
       }
-      User.update({username:req.body.username,email:req.body.email},{"$set":updateInfo},function(err) {
-        if (err) {
-          return res.json({success: false, msg: 'Profile updation failed.'});
-        }else{
-          res.json({success: true,data:updateInfo,  msg: 'Successful updated profile.'});
-        }
-      }); 
-    }
-  };
+    }); 
+ 
+}
