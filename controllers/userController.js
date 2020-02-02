@@ -8,6 +8,8 @@ module.exports = {
     updateProfile: updateProfile,
     createEvent: createEvent,
     getEvents: getEvents,
+    getUsers:getUsers,
+    deactiveUser:deactiveUser
 }
 
 
@@ -35,7 +37,9 @@ function signin(req, res) {
   
       if (!user) {
         res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
-      } else {
+      } else if(!user.active){
+        res.status(401).send({success: false, msg: 'Account deactivated.Please contact admin for activation'});
+      }else {
         // check if password matches
         user.comparePassword(req.body.password, function (err, isMatch) {
           if (isMatch && !err) {
@@ -105,5 +109,29 @@ function signin(req, res) {
         res.json({success: true, data:result ,msg: 'Successful event fetched.'});
       }
     }); 
- 
+  }
+    function getUsers(req, res) {
+      User.find({},function(err,result) {
+         if (err) {
+           return res.json({success: false, msg: 'Problem in fetching users.'});
+         }else{
+           let list= JSON.parse(JSON.stringify(result));
+           let userList=list.filter(function(row){
+            return row.role=='user';
+           })
+           let adminList=list.filter(function(row){
+            return row.role=='admin';
+          })
+           res.json({success: true, data:{userList:userList,adminList:adminList} ,msg: 'Successful users fetched.'});
+         }
+       }); 
+}
+function deactiveUser(req,res){
+  User.update({username:req.body.username,email:req.body.email},{"$set":{active:req.body.active}},function(err) {
+    if (err) {
+      return res.json({success: false, msg: 'Updation failed.'});
+    }else{
+      res.json({success: true, msg: 'Successfully updated.'});
+    }
+  }); 
 }
