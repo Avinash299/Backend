@@ -7,13 +7,17 @@ var RoleSchema = new Schema({
         required: true,
         unique:true
     },
-    modules: {
+    dashbaordPermission: {
         type: Array,
         required: true
     },
-    permissions: {
+    userPermission: {
         type: Array,
-        required: true
+        required: false
+    },
+    chartPermission: {
+        type: Array,
+        required: false
     },
     active:{
         type:Boolean,
