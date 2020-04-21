@@ -7,6 +7,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var config = require('./config/database');
 var usersRouter = require('./routes/users');
+var roleRouter = require('./routes/role');
+
 var cors = require('cors');
 
 mongoose.connect(config.database, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true });
@@ -30,6 +32,7 @@ app.get('/', function (req, res) {
 });
 
 app.use('/api/users', usersRouter);
+app.use('/api/role', roleRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
