@@ -7,7 +7,7 @@ var RoleSchema = new Schema({
         required: true,
         unique:true
     },
-    dashbaordPermission: {
+    dashboardPermission: {
         type: Array,
         required: true
     },

@@ -12,39 +12,43 @@ var UserSchema = new Schema({
         unique: true,
         required: true
     },
+    dob: {
+        type: String,
+        required: false
+    },
     password: {
         type: String,
         required: true
     },
-    aboutMe: {
+    city: {
+        type: Array,
+        required: false
+    },
+    state: {
+        type: Array,
+        required: false
+    },
+    country: {
+        type: Array,
+        required: false
+    },
+    mobile: {
+        type: String,
+        required: false,
+    },
+    pin: {
         type: String,
         required: false
     },
-    age: {
-        type: String,
-        required: false,
-        default:0
-    },
-    mobileNo: {
-        type: String,
-        required: false,
-        default:0,
-    },
-    firstName: {
-        type: String,
-        required: false,
-        default:""
-    },
-    lastName: {
-        type: String,
-        required: false,
-        default:""
-    },
-    address: {
+    addressLine1: {
         type: Object,
         required: false
     },
-    terms: {
+    addressLine2: {
+        type: Object,
+        required: false
+    },
+    acceptTerms: {
         type: Boolean,
         required: false
     },

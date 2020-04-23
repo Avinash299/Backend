@@ -4,9 +4,11 @@ var User = require("../models/user");
 module.exports = {
   signup: signup,
   login: login,
-  updateProfile: updateProfile,
+  updateUser: updateUser,
   getUsers: getUsers,
-  deactiveUser: deactiveUser
+  deactiveUser: deactiveUser,
+  getUserById: getUserById,
+  deleteUser: deleteUser
 }
 
 
@@ -43,14 +45,10 @@ function login(req, res) {
           let userData = {
             username: user.username,
             email: user.email,
-            aboutMe: user.aboutMe,
-            address: user.address,
-            terms: user.terms,
-            age: user.age,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            mobileNo: user.mobileNo,
+            dob: user.dob,
+            mobile: user.mobile,
             role: user.role,
+            id:user._id
           }
           let userInfo = JSON.parse(JSON.stringify(user));
           var token = jwt.sign(userInfo, config.secret, {
@@ -66,22 +64,28 @@ function login(req, res) {
   });
 };
 
-function updateProfile(req, res) {
-  if (!req.body.username || !req.body.email) {
-    res.json({ success: false, msg: 'Please pass username and email.' });
+function updateUser(req, res) {
+  if (!req.params.id) {
+    res.json({ success: false, msg: 'User not found.' });
   } else {
-    // update the user
     let updateInfo = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      address: req.body.address,
-      aboutMe: req.body.aboutMe
+      username: req.body.username,
+      email: req.body.email,
+      dob: req.body.dob,
+      mobile: req.body.mobile,
+      password: req.body.password,
+      city: req.body.city,
+      state: req.body.state,
+      country: req.body.country,
+      pin: req.body.pin,
+      addressLine1: req.body.addressLine1,
+      addressLine2: req.body.addressLine2,
     }
-    User.update({ username: req.body.username, email: req.body.email }, { "$set": updateInfo }, function (err) {
+    User.update({ _id: req.params.id }, { "$set": updateInfo }, function (err, result) {
       if (err) {
-        return res.json({ success: false, msg: 'Profile updation failed.' });
+        return res.json({ success: false, msg: 'User updation failed.' });
       } else {
-        res.json({ success: true, data: updateInfo, msg: 'Successful updated profile.' });
+        res.json({ success: true, data: updateInfo, msg: 'Successful updated user.' });
       }
     });
   }
@@ -89,27 +93,40 @@ function updateProfile(req, res) {
 
 
 function getUsers(req, res) {
-  User.find({}, function (err, result) {
+  User.find({}, { username: 1, mobile: 1, dob: 1, email: 1 ,active:1}, function (err, result) {
     if (err) {
       return res.json({ success: false, msg: 'Problem in fetching users.' });
     } else {
-      let list = JSON.parse(JSON.stringify(result));
-      let userList = list.filter(function (row) {
-        return row.role == 'user';
-      })
-      let adminList = list.filter(function (row) {
-        return row.role == 'admin';
-      })
-      res.json({ success: true, data: { userList: userList, adminList: adminList }, msg: 'Successful users fetched.' });
+      res.json({ success: true, data: result, msg: 'Successful users fetched.' });
     }
   });
 }
 function deactiveUser(req, res) {
-  User.update({ username: req.body.username, email: req.body.email }, { "$set": { active: req.body.active } }, function (err) {
+  User.update({ _id: req.params.id }, { "$set": { active: req.params.value } }, function (err) {
     if (err) {
       return res.json({ success: false, msg: 'Updation failed.' });
     } else {
       res.json({ success: true, msg: 'Successfully updated.' });
+    }
+  });
+}
+function getUserById(req, res) {
+  let id = req.params.id;
+  User.findOne({ _id: id }, function (err, result) {
+    if (err) {
+      return res.json({ success: false, msg: 'Problem in fetching User.' });
+    } else {
+      res.json({ success: true, data: result, msg: 'Successful user fetched.' });
+    }
+  });
+}
+
+function deleteUser(req, res) {
+  User.remove({ _id: req.params.id }, function (err) {
+    if (err) {
+      return res.json({ success: false, msg: 'Deletion failed.' });
+    } else {
+      res.json({ success: true, msg: 'Successfully deleted.' });
     }
   });
 }
