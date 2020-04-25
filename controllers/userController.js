@@ -1,6 +1,9 @@
 var config = require("../config/database");
 var jwt = require('jsonwebtoken');
 var User = require("../models/user");
+var CryptoJS = require("crypto-js");
+const CRYPTO_KEY = 'auth-pass';
+
 module.exports = {
   signup: signup,
   login: login,
@@ -20,7 +23,7 @@ function signup(req, res) {
     // save the user
     newUser.save(function (err) {
       if (err) {
-        return res.json({ success: false, msg: 'Username already exists.' });
+        return res.json({ success: false, msg: 'Username or email already exists.' });
       } else {
         res.json({ success: true, msg: 'Successful created new user.' });
       }
@@ -40,8 +43,7 @@ function login(req, res) {
       res.status(401).send({ success: false, msg: 'Account deactivated.Please contact admin for activation' });
     } else {
       // check if password matches
-      user.comparePassword(req.body.password, function (err, isMatch) {
-        if (isMatch && !err) {
+        if (decrypt(req.body.password) === decrypt(user.password)) {
           let userData = {
             username: user.username,
             email: user.email,
@@ -59,7 +61,6 @@ function login(req, res) {
         } else {
           res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
         }
-      });
     }
   });
 };
@@ -129,4 +130,8 @@ function deleteUser(req, res) {
       res.json({ success: true, msg: 'Successfully deleted.' });
     }
   });
+}
+function decrypt(value){
+  let bytes  = CryptoJS.AES.decrypt(value, CRYPTO_KEY);
+  return bytes.toString(CryptoJS.enc.Utf8);
 }
