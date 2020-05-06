@@ -12,6 +12,7 @@ router.get('/get/:id', passport.authenticate('jwt', { session: false}),  userCon
 router.get('/get', passport.authenticate('jwt', { session: false}),  userController.getUsers);
 router.get('/active/:id/:value', passport.authenticate('jwt', { session: false}),  userController.deactiveUser);
 router.delete('/delete/:id', passport.authenticate('jwt', { session: false}),  userController.deleteUser);
+router.get('/hierarchy', passport.authenticate('jwt', { session: false}),  userController.userHierarchy);
 
 
 module.exports = router;

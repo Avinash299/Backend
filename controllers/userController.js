@@ -11,7 +11,8 @@ module.exports = {
   getUsers: getUsers,
   deactiveUser: deactiveUser,
   getUserById: getUserById,
-  deleteUser: deleteUser
+  deleteUser: deleteUser,
+  userHierarchy:userHierarchy
 }
 
 
@@ -81,6 +82,8 @@ function updateUser(req, res) {
       pin: req.body.pin,
       addressLine1: req.body.addressLine1,
       addressLine2: req.body.addressLine2,
+      role: req.body.role,
+      manager: req.body.manager,
     }
     User.update({ _id: req.params.id }, { "$set": updateInfo }, function (err, result) {
       if (err) {
@@ -134,4 +137,41 @@ function deleteUser(req, res) {
 function decrypt(value){
   let bytes  = CryptoJS.AES.decrypt(value, CRYPTO_KEY);
   return bytes.toString(CryptoJS.enc.Utf8);
+}
+function userHierarchy(req, res) {
+  User.aggregate([
+    { $unwind: { path: "$manager", preserveNullAndEmptyArrays: true } },
+    { $unwind: { path: "$role", preserveNullAndEmptyArrays: true } },
+    {
+      "$project": {
+        id: "$_id",
+        name: "$username",
+        parentId: "$manager.id",
+        type: "$role.name"
+      }
+    }
+  ], function (err,data) {
+    if (err) {
+      return res.json({ success: false, msg: 'Get organisation tree failed.' });
+    } else {
+      let orgTree= list_to_tree(data);
+      res.json({data:orgTree, success: true, msg: 'Successfully deleted.' });
+    }
+  });
+}
+function list_to_tree(list) {
+  var map = {}, node, roots = [], i;
+  for (i = 0; i < list.length; i += 1) {
+      map[list[i].id] = i; 
+      list[i].children = []; 
+  }
+  for (i = 0; i < list.length; i += 1) {
+      node = list[i];
+      if (node.parentId !== undefined) {
+          list[map[node.parentId]].children.push(node);
+      } else {
+          roots.push(node);
+      }
+  }
+  return roots;
 }

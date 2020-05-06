@@ -53,8 +53,12 @@ var UserSchema = new Schema({
         required: false
     },
     role: {
-        type: String,
-        default: "user"
+        type: Array,
+        default: []
+    },
+    manager:{
+        type: Array,
+        required: false
     },
     active:{
         type:Boolean,
